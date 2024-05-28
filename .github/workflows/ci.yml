@@ -272,7 +272,7 @@ jobs:
           sleep 10
           dora stop --name ci-rust-test  --grace-duration 5s
           dora destroy
-          export IP=127.0.0.1
+          export IP="$(curl ipinfo.io/ip)" 
           export PORT=6012
           dora up
           dora list --coordinator-addr $IP:$PORT
@@ -303,7 +303,7 @@ jobs:
           sleep 10
           dora stop --name ci-python-test  --grace-duration 5s
           dora destroy
-          export IP=127.0.0.1 
+          export IP="$(curl ipinfo.io/ip)" 
           export PORT=6012
           dora up
           dora list --coordinator-addr $IP:$PORT
