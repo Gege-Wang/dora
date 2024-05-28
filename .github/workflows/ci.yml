@@ -273,7 +273,7 @@ jobs:
           dora stop --name ci-rust-test  --grace-duration 5s
           dora destroy
           export IP="$(curl ipinfo.io/ip)" 
-          dora up --coordinator-addr $IP:6012
+          dora up
           dora list --coordinator-addr $IP:6012
           dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:6012
           sleep 10
@@ -303,7 +303,7 @@ jobs:
           dora stop --name ci-python-test  --grace-duration 5s
           dora destroy
           export IP="$(curl ipinfo.io/ip)" 
-          dora up --coordinator-addr $IP:6012
+          dora up
           dora list --coordinator-addr $IP:6012
           dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:6012
           sleep 10
