@@ -273,12 +273,13 @@ jobs:
           dora stop --name ci-rust-test  --grace-duration 5s
           dora destroy
           export IP="$(curl ipinfo.io/ip)" 
+          export PORT=53290
           dora up
-          dora list --coordinator-addr $IP:6012
-          dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:6012
+          dora list --coordinator-addr $IP:$PORT
+          dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:$PORT
           sleep 10
-          dora stop --name ci-rust-test  --grace-duration 5 --coordinator-addr $IP:6012
-          dora destroy --coordinator-addr $IP:6012
+          dora stop --name ci-rust-test  --grace-duration 5 --coordinator-addr $IP:$PORT
+          dora destroy --coordinator-addr $IP:$PORT
           
       - name: "Test CLI (Python)"
         timeout-minutes: 30
@@ -303,12 +304,13 @@ jobs:
           dora stop --name ci-python-test  --grace-duration 5s
           dora destroy
           export IP="$(curl ipinfo.io/ip)" 
+          export PORT=53290
           dora up
-          dora list --coordinator-addr $IP:6012
-          dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:6012
+          dora list --coordinator-addr $IP:$PORT
+          dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:$PORT
           sleep 10
-          dora stop --name ci-rust-test  --grace-duration 5 --coordinator-addr $IP:6012
-          dora destroy --coordinator-addr $IP:6012
+          dora stop --name ci-rust-test  --grace-duration 5 --coordinator-addr $IP:$PORT
+          dora destroy --coordinator-addr $IP:$PORT
 
   clippy:
     name: "Clippy"
