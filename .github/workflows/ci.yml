@@ -273,12 +273,12 @@ jobs:
           dora stop --name ci-rust-test  --grace-duration 5s
           dora destroy
           export IP=127.0.0.1
-          export PORT=53290
+          export PORT=6012
           dora up
           dora list --coordinator-addr $IP:$PORT
           dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:$PORT
           sleep 10
-          dora stop --name ci-rust-test  --grace-duration 5 --coordinator-addr $IP:$PORT
+          dora stop --name ci-rust-test  --grace-duration 5s --coordinator-addr $IP:$PORT
           dora destroy --coordinator-addr $IP:$PORT
           
       - name: "Test CLI (Python)"
@@ -304,12 +304,12 @@ jobs:
           dora stop --name ci-python-test  --grace-duration 5s
           dora destroy
           export IP=127.0.0.1 
-          export PORT=53290
+          export PORT=6012
           dora up
           dora list --coordinator-addr $IP:$PORT
           dora start dataflow.yml --name ci-rust-test --coordinator-addr $IP:$PORT
           sleep 10
-          dora stop --name ci-rust-test  --grace-duration 5 --coordinator-addr $IP:$PORT
+          dora stop --name ci-rust-test  --grace-duration 5s --coordinator-addr $IP:$PORT
           dora destroy --coordinator-addr $IP:$PORT
 
   clippy:
