@@ -356,7 +356,7 @@ fn run() -> eyre::Result<()> {
                     None => {
                         let coordination_addr = coordinator_addr.unwrap_or_else(|| {
                             tracing::info!("Starting in local mode");
-                            let localhost = Ipv4Addr::new(127, 0, 0, 1);
+                            let localhost = Ipv4Addr::new(0, 0, 0, 0);
                             (localhost, DORA_COORDINATOR_PORT_DEFAULT).into()
                     });
                         Daemon::run(coordination_addr, machine_id.unwrap_or_default(), addr).await
