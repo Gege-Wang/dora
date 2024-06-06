@@ -24,14 +24,14 @@ pub(crate) fn up(config_path: Option<&Path>, coordinator_addr: Option<IpAddr>) -
         }
     };
 
-    if !daemon_running(&mut *session)? {
+    if !daemon_running(&mut *session).unwrap().is_empty() {
         start_daemon().wrap_err("failed to start dora-daemon")?;
 
         // wait a bit until daemon is connected
         let mut i = 0;
         const WAIT_S: f32 = 0.1;
         loop {
-            if daemon_running(&mut *session)? {
+            if daemon_running(&mut *session).unwrap().is_empty() {
                 break;
             }
             i += 1;
