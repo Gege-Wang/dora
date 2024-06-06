@@ -3,11 +3,13 @@ use communication_layer_request_reply::TcpRequestReplyConnection;
 use dora_core::topics::{ControlRequest, ControlRequestReply};
 use eyre::{bail, Context};
 use std::{
-    collections::BTreeSet, io::{IsTerminal, Write}, net::IpAddr
+    collections::BTreeSet,
+    io::{IsTerminal,Write},
+    net::SocketAddr,
 };
 use termcolor::{Color, ColorChoice, ColorSpec, WriteColor};
 
-pub fn check_environment(coordinator_addr: Option<IpAddr>) -> eyre::Result<()> {
+pub fn check_environment(coordinator_addr: SocketAddr) -> eyre::Result<()> {
     let mut error_occured = false;
 
     let color_choice = if std::io::stdout().is_terminal() {
