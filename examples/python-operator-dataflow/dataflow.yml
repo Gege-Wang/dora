@@ -1,5 +1,7 @@
 nodes:
   - id: webcam
+    _unstable_deploy:
+      machine: A
     operator:
       python: webcam.py
       inputs:
@@ -8,6 +10,8 @@ nodes:
         - image
 
   - id: object_detection
+    _unstable_deploy:
+      machine: B
     operator:
       send_stdout_as: stdout
       python: object_detection.py
@@ -18,6 +22,8 @@ nodes:
         - stdout
 
   - id: plot
+    _unstable_deploy:
+      machine: A
     operator:
       python: plot.py
       inputs:
