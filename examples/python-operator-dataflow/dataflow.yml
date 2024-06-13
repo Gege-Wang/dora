@@ -3,30 +3,30 @@ nodes:
     _unstable_deploy:
       machine: A
     operator:
-      python: webcam.py
+      python: /home/echo/Dev/gegedora/examples/python-operator-dataflow/webcam.py
       inputs:
         tick: dora/timer/millis/50
       outputs:
         - image
 
-  - id: object_detection
-    _unstable_deploy:
-      machine: B
-    operator:
-      send_stdout_as: stdout
-      python: object_detection.py
-      inputs:
-        image: webcam/image
-      outputs:
-        - bbox
-        - stdout
+  # - id: object_detection
+  #   _unstable_deploy:
+  #     machine: B
+  #   operator:
+  #     send_stdout_as: stdout
+  #     python: /Users/miyamo/dora/examples/python-operator-dataflow/object_detection.py
+  #     inputs:
+  #       image: webcam/image
+  #     outputs:
+  #       - bbox
+  #       - stdout
 
   - id: plot
     _unstable_deploy:
-      machine: A
+      machine: B
     operator:
-      python: plot.py
+      python: /Users/miyamo/dora/examples/python-operator-dataflow/plot.py
       inputs:
         image: webcam/image
-        bbox: object_detection/bbox
-        assistant_message: object_detection/stdout
+        # bbox: object_detection/bbox
+        # assistant_message: object_detection/stdout

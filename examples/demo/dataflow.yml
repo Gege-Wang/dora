@@ -1,0 +1,17 @@
+nodes:
+  - id: webcam
+    _unstable_deploy:
+      machine: A
+    operator:
+      python: /home/echo/Dev/gegedora/examples/demo/webcam.py
+      inputs:
+        tick: dora/timer/millis/100
+      outputs:
+        - image
+  - id: plot
+    _unstable_deploy:
+      machine: B
+    operator:
+      python: /Users/miyamo/dora/examples/demo/plot.py
+      inputs:
+        image: webcam/image
