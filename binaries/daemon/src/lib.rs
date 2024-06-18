@@ -919,6 +919,8 @@ impl Daemon {
                 },
                 timestamp: self.clock.new_timestamp(),
             };
+            println!("remote receivers: {:?}", remote_receivers);
+            println!("inter_daemon_connections: {:?}", self.inter_daemon_connections);
             inter_daemon::send_inter_daemon_event(
                 &remote_receivers,
                 &mut self.inter_daemon_connections,

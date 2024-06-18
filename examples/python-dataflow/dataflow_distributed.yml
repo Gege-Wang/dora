@@ -1,0 +1,31 @@
+nodes:
+  - id: webcam
+    _unstable_deploy:
+      machine: A
+    custom:
+      source: /home/miyamo/dora/examples/python-dataflow/webcam.py
+      inputs:
+        tick:
+          source: dora/timer/millis/50
+          queue_size: 1000
+      outputs:
+        - image
+
+  - id: object_detection
+    _unstable_deploy:
+      machine: B
+    custom:
+      source: /Users/miyamo/dora/examples/python-dataflow/object_detection.py
+      inputs:
+        image: webcam/image
+      outputs:
+        - bbox
+
+  - id: plot
+    _unstable_deploy:
+      machine: A
+    custom:
+      source: /home/miyamo/dora/examples/python-dataflow/plot.py
+      inputs:
+        image: webcam/image
+        bbox: object_detection/bbox

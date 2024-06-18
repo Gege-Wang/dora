@@ -1,9 +1,11 @@
 use crate::tcp_utils::{tcp_receive, tcp_send};
+use bincode::de;
 use dora_core::daemon_messages::{InterDaemonEvent, Timestamped};
 use eyre::{Context, ContextCompat};
 use std::{collections::BTreeMap, io::ErrorKind, net::SocketAddr};
 use tokio::net::{TcpListener, TcpStream};
 
+#[derive(Debug)]
 pub struct InterDaemonConnection {
     socket: SocketAddr,
     connection: Option<TcpStream>,
