@@ -2,7 +2,7 @@ use crate::tcp_utils::{tcp_receive, tcp_send};
 use bincode::de;
 use dora_core::daemon_messages::{InterDaemonEvent, Timestamped};
 use eyre::{Context, ContextCompat};
-use std::{collections::BTreeMap, io::ErrorKind, net::{IpAddr, SocketAddr}};
+use std::{collections::BTreeMap, io::ErrorKind, net::SocketAddr};
 use tokio::net::{TcpListener, TcpStream};
 
 #[derive(Debug)]
@@ -47,16 +47,10 @@ pub async fn send_inter_daemon_event(
     event: &Timestamped<InterDaemonEvent>,
 ) -> eyre::Result<()> {
     let message = bincode::serialize(event).wrap_err("failed to serialize InterDaemonEvent")?;
-    
     for target_machine in target_machines {
-        let pre_connection = inter_daemon_connections
+        let connection = inter_daemon_connections
             .get_mut(target_machine)
-            .wrap_err_with(|| format!("unknown target machine `{target_machine}`"))?;
-        if target_machine == "A" {
-            let port = pre_connection.socket().port();
-            pre_connection.socket = SocketAddr::new(IpAddr::V4([172,16,203, 208].into()), port);
-        }
-        let connection = pre_connection
+            .wrap_err_with(|| format!("unknown target machine `{target_machine}`"))?
             .connect()
             .await
             .wrap_err_with(|| format!("failed to connect to machine `{target_machine}`"))?;

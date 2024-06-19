@@ -3,7 +3,7 @@ nodes:
     _unstable_deploy:
       machine: A
     operator:
-      python: /Users/miyamo/dora/examples/python-operator-dataflow/webcam.py
+      python: ./webcam.py
       inputs:
         tick: dora/timer/millis/50
       outputs:
@@ -14,7 +14,7 @@ nodes:
       machine: B
     operator:
       send_stdout_as: stdout
-      python: /home/miyamo/dora/examples/python-operator-dataflow/object_detection.py
+      python: ./object_detection.py
       inputs:
         image: webcam/image
       outputs:
@@ -25,7 +25,7 @@ nodes:
     _unstable_deploy:
       machine: A
     operator:
-      python: /Users/miyamo/dora/examples/python-operator-dataflow/plot.py
+      python: ./plot.py
       inputs:
         image: webcam/image
         bbox: object_detection/bbox

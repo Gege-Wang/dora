@@ -184,7 +184,7 @@ async fn start_inner(
                         .peer_addr()
                         .map(|addr| addr.ip())
                         .map_err(|err| format!("failed to get peer addr of connection: {err}"));
-                    let register_result = version_check.and(peer_ip);
+                    let register_result = version_check.and(peer_ip);            
 
                     let reply: Timestamped<RegisterResult> = Timestamped {
                         inner: match &register_result {

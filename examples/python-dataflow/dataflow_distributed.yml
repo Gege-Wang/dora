@@ -3,7 +3,7 @@ nodes:
     _unstable_deploy:
       machine: A
     custom:
-      source: /home/miyamo/dora/examples/python-dataflow/webcam.py
+      source: webcam.py
       inputs:
         tick:
           source: dora/timer/millis/50
@@ -15,7 +15,7 @@ nodes:
     _unstable_deploy:
       machine: B
     custom:
-      source: /Users/miyamo/dora/examples/python-dataflow/object_detection.py
+      source: object_detection.py
       inputs:
         image: webcam/image
       outputs:
@@ -25,7 +25,7 @@ nodes:
     _unstable_deploy:
       machine: A
     custom:
-      source: /home/miyamo/dora/examples/python-dataflow/plot.py
+      source: plot.py
       inputs:
         image: webcam/image
         bbox: object_detection/bbox
