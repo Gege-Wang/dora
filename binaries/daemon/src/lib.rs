@@ -350,12 +350,12 @@ impl Daemon {
                 }
                 for (machine_id, mut socket) in machine_listen_ports {
                     if socket.ip().is_loopback() {
-                        if let Some(socket) = self.coordinator_connection {
-                            socket = socket
+                        if let Some(ref coordinator_socket) = self.coordinator_connection {
+                            socket = coordinator_socket
                             .peer_addr()
-                            .map(|addr| addr.ip())
-                            .map_err(|err| format!("failed to get peer addr of inter-daemon connection: {err}"));
+                            .wrap_err("failed to get peer address of coordinator connection")?;
                     }
+                }
                     match self.inter_daemon_connections.entry(machine_id) {
                         std::collections::btree_map::Entry::Vacant(entry) => {
                             entry.insert(InterDaemonConnection::new(socket));
