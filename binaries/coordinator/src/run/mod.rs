@@ -49,7 +49,13 @@ pub(super) async fn spawn_dataflow(
                 .map(|c| (m.clone(), c.listen_socket))
         })
         .collect::<Result<BTreeMap<_, _>, _>>()?;
-
+    let working_dir = if remote_machine_id.is_empty() {
+        working_dir
+    } else {
+        dirs::home_dir()
+            .ok_or_else(|| eyre!("could not create working directory for multiple-daemons dataflow!"))
+            .map(|home| home)?
+    };
     let spawn_command = SpawnDataflowNodes {
         dataflow_id: uuid,
         working_dir,

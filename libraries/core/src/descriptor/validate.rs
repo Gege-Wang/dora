@@ -58,8 +58,8 @@ pub fn check_dataflow(
                     };
                 }
             },
-            descriptor::CoreNodeKind::Runtime(node) => {
-                for operator_definition in &node.operators {
+            descriptor::CoreNodeKind::Runtime(runtime) => {
+                for operator_definition in &runtime.operators {
                     match &operator_definition.config.source {
                         OperatorSource::SharedLibrary(path) => {
                             if source_is_url(path) {
@@ -72,7 +72,6 @@ pub fn check_dataflow(
                             }
                         }
                         OperatorSource::Python(python_source) => {
-                            has_python_operator = true;
                             let path = &python_source.source;
                             if source_is_url(path) {
                                 info!("{path} is a URL."); // TODO: Implement url check.

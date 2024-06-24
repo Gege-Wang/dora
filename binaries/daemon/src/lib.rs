@@ -606,7 +606,6 @@ impl Daemon {
                 bail!("there is already a running dataflow with ID `{dataflow_id}`")
             }
         };
-
         let mut log_messages = Vec::new();
         for node in nodes {
             let local = node.deploy.machine == self.machine_id;

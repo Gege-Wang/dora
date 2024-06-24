@@ -2298,6 +2298,7 @@ name = "dora-coordinator"
 version = "0.3.5"
 dependencies = [
  "ctrlc",
+ "dirs 5.0.1",
  "dora-core",
  "dora-tracing",
  "eyre",
