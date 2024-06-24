@@ -323,7 +323,15 @@ impl ResolvedDeploy {
             Some(m) => m,
             None => default_machine.to_owned(),
         };
+<<<<<<< HEAD
         Self { machine }
+=======
+        Self {
+            machine,
+            local: deploy.local.unwrap_or(true),
+            working_dir: deploy.working_dir.clone(),
+        }
+>>>>>>> 8d356171 (fix inter-daemon peer address)
     }
 }
 

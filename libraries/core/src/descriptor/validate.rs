@@ -55,7 +55,25 @@ pub fn check_dataflow(
                     } else {
                         resolve_path(source, working_dir)
                             .wrap_err_with(|| format!("Could not find source path `{}`", source))?;
+<<<<<<< HEAD
                     };
+=======
+                    } else {
+                        match &node.deploy.working_dir {
+                            Some(_working_dir) => {}
+                            None => {
+                                let path = source_to_path(source);
+                                if path.is_relative() {
+                                    eyre::bail!(
+                                        "paths of remote nodes must be absolute (node `{}`) unless you specify a working_dir for remote machine",
+                                        node.id
+                                    );
+                                }
+                                info!("skipping path check for remote node `{}`", node.id);
+                            }
+                        }
+                    }
+>>>>>>> 8d356171 (fix inter-daemon peer address)
                 }
             },
             descriptor::CoreNodeKind::Runtime(runtime) => {
@@ -69,21 +87,90 @@ pub fn check_dataflow(
                                 if !working_dir.join(&path).exists() {
                                     bail!("no shared library at `{}`", path.display());
                                 }
+<<<<<<< HEAD
+=======
+                            } else {
+                                match &node.deploy.working_dir {
+                                    Some(_working_dir) => {}
+                                    None => {
+                                        let path = source_to_path(path);
+                                        if path.is_relative() {
+                                            eyre::bail!(
+                                                "paths of operator must be absolute (operator `{}`) unless you specify a working_dir for remote machine",
+                                                operator_definition.id
+                                            );
+                                        }
+                                        info!(
+                                            "skipping path check for remote operator `{}`",
+                                            operator_definition.id
+                                        );
+                                    }
+                                }
+>>>>>>> 8d356171 (fix inter-daemon peer address)
                             }
                         }
                         OperatorSource::Python(python_source) => {
                             let path = &python_source.source;
                             if source_is_url(path) {
                                 info!("{path} is a URL."); // TODO: Implement url check.
+<<<<<<< HEAD
                             } else if !working_dir.join(path).exists() {
                                 bail!("no Python library at `{path}`");
+=======
+                            } else if node.deploy.local {
+                                if !working_dir.join(path).exists() {
+                                    bail!("no Python library at `{path}`");
+                                }
+                                has_python_operator = true;
+                            } else {
+                                match &node.deploy.working_dir {
+                                    Some(_working_dir) => {}
+                                    None => {
+                                        let path = source_to_path(path);
+                                        if path.is_relative() {
+                                            eyre::bail!(
+                                                "paths of python operator must be absolute (operator `{}`) unless you specify a working_dir for remote machine",
+                                                operator_definition.id
+                                            );
+                                        }
+                                        info!(
+                                            "skipping path check for remote python operator `{}`",
+                                            operator_definition.id
+                                        );
+                                    }
+                                }
+>>>>>>> 8d356171 (fix inter-daemon peer address)
                             }
                         }
                         OperatorSource::Wasm(path) => {
                             if source_is_url(path) {
                                 info!("{path} is a URL."); // TODO: Implement url check.
+<<<<<<< HEAD
                             } else if !working_dir.join(path).exists() {
                                 bail!("no WASM library at `{path}`");
+=======
+                            } else if node.deploy.local {
+                                if !working_dir.join(path).exists() {
+                                    bail!("no WASM library at `{path}`");
+                                }
+                            } else {
+                                match &node.deploy.working_dir {
+                                    Some(_working_dir) => {}
+                                    None => {
+                                        let path = source_to_path(path);
+                                        if path.is_relative() {
+                                            eyre::bail!(
+                                                "paths of Wasm operator must be absolute (operator `{}`) unless you specify a working_dir for remote machine",
+                                                operator_definition.id
+                                            );
+                                        }
+                                        info!(
+                                            "skipping path check for remote Wasm operator `{}`",
+                                            operator_definition.id
+                                        );
+                                    }
+                                }
+>>>>>>> 8d356171 (fix inter-daemon peer address)
                             }
                         }
                     }

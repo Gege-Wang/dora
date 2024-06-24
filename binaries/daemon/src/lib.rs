@@ -372,7 +372,16 @@ impl Daemon {
                 match dataflow_descriptor.communication.remote {
                     dora_core::config::RemoteCommunicationConfig::Tcp => {}
                 }
-                for (machine_id, socket) in machine_listen_ports {
+                for (machine_id, mut socket) in machine_listen_ports {
+                    if socket.ip().is_loopback() {
+                        if let Some(ref coordinator_socket) = self.coordinator_connection {
+                            let new_ip = coordinator_socket
+                                .peer_addr()
+                                .wrap_err("failed to get peer address of coordinator")?
+                                .ip();
+                            socket = SocketAddr::new(new_ip, socket.port());
+                        }
+                    }
                     match self.inter_daemon_connections.entry(machine_id) {
                         std::collections::btree_map::Entry::Vacant(entry) => {
                             entry.insert(InterDaemonConnection::new(socket));
