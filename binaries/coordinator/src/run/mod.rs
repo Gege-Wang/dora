@@ -53,7 +53,9 @@ pub(super) async fn spawn_dataflow(
         working_dir
     } else {
         dirs::home_dir()
-            .ok_or_else(|| eyre!("could not create working directory for multiple-daemons dataflow!"))
+            .ok_or_else(|| {
+                eyre!("could not create working directory for multiple-daemons dataflow!")
+            })
             .map(|home| home)?
     };
     let spawn_command = SpawnDataflowNodes {
