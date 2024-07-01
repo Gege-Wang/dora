@@ -19,24 +19,27 @@ pub fn check_environment(coordinator_addr: SocketAddr) -> eyre::Result<()> {
     let mut stdout = termcolor::StandardStream::stdout(color_choice);
 
     // check whether coordinator is running
+    println!("check whether coordinator is running");
     write!(stdout, "Dora Coordinator: ")?;
     let mut session = match connect_to_coordinator(coordinator_addr) {
         Ok(session) => {
-            let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)));
+            //let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)));
             writeln!(stdout, "ok")?;
             Some(session)
         }
         Err(_) => {
-            let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red)));
+            //let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red)));
             writeln!(stdout, "not running")?;
             error_occurred = true;
             None
         }
     };
 
-    let _ = stdout.reset();
+    println!("stdout: {:?} to reset", stdout);
+    //let _ = stdout.reset();
 
     // check whether daemon is running
+    println!("check whether daemon is running");
     write!(stdout, "Dora Daemon: ")?;
     if session
         .as_deref_mut()
@@ -51,11 +54,12 @@ pub fn check_environment(coordinator_addr: SocketAddr) -> eyre::Result<()> {
         writeln!(stdout, "not running")?;
         error_occurred = true;
     }
-    let _ = stdout.reset();
+    //let _ = stdout.reset();
 
     writeln!(stdout)?;
 
     if error_occurred {
+        println!("Environment check failed.");
         bail!("Environment check failed.");
     }
 

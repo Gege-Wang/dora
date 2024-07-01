@@ -51,7 +51,7 @@ pub async fn start(
             .wrap_err("failed to open connection")
             .unwrap_or_else(Event::DaemonConnectError)
     });
-
+    println!("next exec init tasks...");
     let mut tasks = FuturesUnordered::new();
     let control_events = control::control_events(bind_control, &tasks)
         .await
@@ -72,11 +72,13 @@ pub async fn start(
         start_inner(events, &tasks).await?;
 
         tracing::debug!("coordinator main loop finished, waiting on spawned tasks");
+        println!("coordinator main loop finished, waiting on spawned tasks");
         while let Some(join_result) = tasks.next().await {
             if let Err(err) = join_result {
                 tracing::error!("task panicked: {err}");
             }
         }
+        println!("all spawned tasks finished, exiting..");
         tracing::debug!("all spawned tasks finished, exiting..");
         Ok(())
     };
@@ -175,6 +177,7 @@ async fn start_inner(
                     dora_version: daemon_version,
                     listen_port,
                 } => {
+                    println!("handle DaemonEvent::Register...");
                     let coordinator_version: &&str = &env!("CARGO_PKG_VERSION");
                     let version_check = if &daemon_version == coordinator_version {
                         Ok(())
@@ -319,6 +322,7 @@ async fn start_inner(
                             name,
                             local_working_dir,
                         } => {
+                            println!("[coordinator]handle ControlRequest::Start...");
                             let name = name.or_else(|| names::Generator::default().next());
 
                             let inner = async {
@@ -349,6 +353,7 @@ async fn start_inner(
                             let _ = reply_sender.send(reply);
                         }
                         ControlRequest::Check { dataflow_uuid } => {
+                            println!("[coordiantor] handle ControlRequest::Check...");
                             let status = match &running_dataflows.get(&dataflow_uuid) {
                                 Some(_) => ControlRequestReply::DataflowStarted {
                                     uuid: dataflow_uuid,

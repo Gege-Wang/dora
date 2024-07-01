@@ -96,11 +96,13 @@ impl Daemon {
         inter_daemon_addr: SocketAddr,
         local_listen_port: u16,
     ) -> eyre::Result<()> {
+        println!("[daemon]Exec daemon run()");
         let clock = Arc::new(HLC::default());
 
         let ctrlc_events = set_up_ctrlc_handler(clock.clone())?;
 
         // spawn inter daemon listen loop
+        println!("[daemon] spawn inter daemon listen loop");
         let (events_tx, events_rx) = flume::bounded(10);
         let listen_port =
             inter_daemon::spawn_listener_loop(inter_daemon_addr, machine_id.clone(), events_tx)
@@ -111,6 +113,7 @@ impl Daemon {
         });
 
         // connect to the coordinator
+        println!("[daemon]connect to the coordinator");
         let coordinator_events =
             coordinator::register(coordinator_addr, machine_id.clone(), listen_port, &clock)
                 .await
@@ -126,7 +129,7 @@ impl Daemon {
                 );
 
         // Spawn local listener loop
-        let (events_tx, events_rx) = flume::bounded(10);
+        println!("[daemon]Spawn local listener loop");      let (events_tx, events_rx) = flume::bounded(10);
         let _listen_port = local_listener::spawn_listener_loop(
             (LOCALHOST, local_listen_port).into(),
             machine_id.clone(),
