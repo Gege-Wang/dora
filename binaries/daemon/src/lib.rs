@@ -129,7 +129,8 @@ impl Daemon {
                 );
 
         // Spawn local listener loop
-        println!("[daemon]Spawn local listener loop");      let (events_tx, events_rx) = flume::bounded(10);
+        println!("[daemon]Spawn local listener loop");      
+        let (events_tx, events_rx) = flume::bounded(10);
         let _listen_port = local_listener::spawn_listener_loop(
             (LOCALHOST, local_listen_port).into(),
             machine_id.clone(),

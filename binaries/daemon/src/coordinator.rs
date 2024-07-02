@@ -27,9 +27,11 @@ pub async fn register(
     listen_port: u16,
     clock: &HLC,
 ) -> eyre::Result<impl Stream<Item = Timestamped<CoordinatorEvent>>> {
+    println!("[daemon] register to coordinator...");
     let mut stream = TcpStream::connect(addr)
         .await
         .wrap_err("failed to connect to dora-coordinator")?;
+    println!("[daemon]stream to coordinator: {:?}", stream);
     stream
         .set_nodelay(true)
         .wrap_err("failed to set TCP_NODELAY")?;
@@ -41,9 +43,11 @@ pub async fn register(
         },
         timestamp: clock.new_timestamp(),
     })?;
+    println!("[daemon] ready to send register request to coordinator...");
     tcp_send(&mut stream, &register)
         .await
         .wrap_err("failed to send register request to dora-coordinator")?;
+    println!("[daemon] have sent register request to coordinator...");
     let reply_raw = tcp_receive(&mut stream)
         .await
         .wrap_err("failed to register reply from dora-coordinator")?;
@@ -52,9 +56,11 @@ pub async fn register(
     result.inner.to_result()?;
     if let Err(err) = clock.update_with_timestamp(&result.timestamp) {
         tracing::warn!("failed to update timestamp after register: {err}");
+        println!("failed to update timestamp after register: {err}");
     }
 
     tracing::info!("Connected to dora-coordinator at {:?}", addr);
+    println!("Connected to dora-coordinator at {:?}", addr);
 
     let (tx, rx) = mpsc::channel(1);
     tokio::spawn(async move {

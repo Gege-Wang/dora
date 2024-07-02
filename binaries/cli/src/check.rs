@@ -11,52 +11,58 @@ use termcolor::{Color, ColorChoice, ColorSpec, WriteColor};
 pub fn check_environment(coordinator_addr: SocketAddr) -> eyre::Result<()> {
     let mut error_occurred = false;
 
-    let color_choice = if std::io::stdout().is_terminal() {
-        ColorChoice::Auto
-    } else {
-        ColorChoice::Never
-    };
-    let mut stdout = termcolor::StandardStream::stdout(color_choice);
+    // let color_choice = if std::io::stdout().is_terminal() {
+    //     ColorChoice::Auto
+    // } else {
+    //     ColorChoice::Never
+    // };
+    // let mut stdout = termcolor::StandardStream::stdout(color_choice);
 
     // check whether coordinator is running
     println!("check whether coordinator is running");
-    write!(stdout, "Dora Coordinator: ")?;
+    //write!(stdout, "Dora Coordinator: ")?;
+    print!("Dora Coordinator: ");
     let mut session = match connect_to_coordinator(coordinator_addr) {
         Ok(session) => {
             //let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)));
-            writeln!(stdout, "ok")?;
+            //writeln!(stdout, "ok")?;
+            println!("ok");
             Some(session)
         }
         Err(_) => {
             //let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red)));
-            writeln!(stdout, "not running")?;
+            //writeln!(stdout, "not running")?;
+            println!("not running");
             error_occurred = true;
             None
         }
     };
 
-    println!("stdout: {:?} to reset", stdout);
+    //println!("stdout: {:?} to reset", stdout);
     //let _ = stdout.reset();
 
     // check whether daemon is running
     println!("check whether daemon is running");
-    write!(stdout, "Dora Daemon: ")?;
-    if session
-        .as_deref_mut()
-        .map(daemon_running)
-        .transpose()?
-        .unwrap_or(false)
-    {
-        let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)));
-        writeln!(stdout, "ok")?;
-    } else {
-        let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red)));
-        writeln!(stdout, "not running")?;
-        error_occurred = true;
-    }
+    //write!(stdout, "Dora Daemon: ")?;
+    print!("Dora Daemon: ignore for now");
+    // if session
+    //     .as_deref_mut()
+    //     .map(daemon_running)
+    //     .transpose()?
+    //     .unwrap_or(false)
+    // {
+    //     //let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)));
+    //     //writeln!(stdout, "ok")?;
+    //     println!("ok");
+    // } else {
+    //     //let _ = stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red)));
+    //     //writeln!(stdout, "not running")?;
+    //     println!("not running");
+    //     error_occurred = true;
+    // }
     //let _ = stdout.reset();
 
-    writeln!(stdout)?;
+    //writeln!(stdout)?;
 
     if error_occurred {
         println!("Environment check failed.");

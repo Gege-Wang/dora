@@ -291,13 +291,13 @@ fn run() -> eyre::Result<()> {
         .build()
         .filter();
 
+    println!("[check]Checking environment...");
     match args.command {
         Command::Check {
             dataflow,
             coordinator_addr,
             coordinator_port,
         } => match dataflow {
-            println!("[check]Checking environment...");
             Some(dataflow) => {
                 let working_dir = dataflow
                     .canonicalize()
