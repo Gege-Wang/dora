@@ -53,10 +53,11 @@ pub async fn start(
     });
     println!("[coordinator]next exec init tasks...");
     let mut tasks = FuturesUnordered::new();
+    println!("[coordinator] create futures unordered tasks...");
     let control_events = control::control_events(bind_control, &tasks)
         .await
         .wrap_err("failed to create control events")?;
-
+    //println!("control_events: finished");
     // Setup ctrl-c handler
     let ctrlc_events = set_up_ctrlc_handler()?;
 

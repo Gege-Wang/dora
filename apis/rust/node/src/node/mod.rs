@@ -125,7 +125,7 @@ impl DoraNode {
             dynamic: _,
         } = node_config;
         let clock = Arc::new(uhlc::HLC::default());
-
+        println!("=====================node_config.daemon_communication: {:?}", daemon_communication);
         let event_stream =
             EventStream::init(dataflow_id, &node_id, &daemon_communication, clock.clone())
                 .wrap_err("failed to init event stream")?;
@@ -269,7 +269,6 @@ impl DoraNode {
             .wrap_err_with(|| format!("failed to send output {output_id}"))?;
 
         if let Some((shared_memory, drop_token)) = shmem {
-            eyre::bail!("=========================shared memory not supported yet");
             self.sent_out_shared_memory
                 .insert(drop_token, shared_memory);
         }

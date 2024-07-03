@@ -42,6 +42,7 @@ async fn listen(
     let result = TcpListener::bind(control_listen_addr)
         .await
         .wrap_err("failed to listen for control messages");
+    println!("**[coordinator] control.rs listen() listen for control messages: {:?}", result);
     let incoming = match result {
         Ok(incoming) => incoming,
         Err(err) => {
@@ -54,8 +55,12 @@ async fn listen(
         let new_connection = incoming.accept().map(Either::Left);
         let coordinator_stop = tx.closed().map(Either::Right);
         let connection = match (new_connection, coordinator_stop).race().await {
-            future::Either::Left(connection) => connection,
+            future::Either::Left(connection) => {
+                println!("**[coordinator] new connection not coordinator stop: {:?}", connection);
+                connection
+            },
             future::Either::Right(()) => {
+                println!("**[coordinator] listen coordinator stop break");
                 // coordinator was stopped
                 break;
             }
@@ -63,9 +68,11 @@ async fn listen(
         match connection.wrap_err("failed to connect") {
             Ok((connection, _)) => {
                 let tx = tx.clone();
+                println!("**[coordinator] ready to handle request: {:?}", connection);
                 tokio::spawn(handle_requests(connection, tx, _finish_tx.clone()));
             }
             Err(err) => {
+                println!("**[coordinator] listen connection error: {:?}", err);
                 if tx.blocking_send(err.into()).is_err() {
                     break;
                 }

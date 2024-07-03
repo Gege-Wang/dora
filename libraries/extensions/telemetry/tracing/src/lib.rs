@@ -24,7 +24,7 @@ pub fn set_up_tracing_opts(name: &str, stdout: bool, filename: Option<&str>) -> 
 
     if stdout {
         // Filter log using `RUST_LOG`. More useful for CLI.
-        let env_filter = EnvFilter::from_default_env().or(LevelFilter::WARN);
+        let env_filter = EnvFilter::from_default_env().or(LevelFilter::INFO);
         let layer = tracing_subscriber::fmt::layer()
             .compact()
             .with_filter(env_filter);
