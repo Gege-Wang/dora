@@ -4,9 +4,11 @@ use tokio::{
 };
 
 pub async fn tcp_send(connection: &mut TcpStream, message: &[u8]) -> std::io::Result<()> {
+    println!("**[coordinator]ready tcp_send: message: {:?}", message);
     let len_raw = (message.len() as u64).to_le_bytes();
     connection.write_all(&len_raw).await?;
     connection.write_all(message).await?;
+    println!("**[coordinator]have sent tcp_send: message.len() as u64: {:?}, message is {:?}", len_raw, message);
     connection.flush().await?;
     Ok(())
 }

@@ -53,6 +53,7 @@ pub async fn register(
         .wrap_err("failed to register reply from dora-coordinator")?;
     let result: Timestamped<RegisterResult> = serde_json::from_slice(&reply_raw)
         .wrap_err("failed to deserialize dora-coordinator reply")?;
+    println!("**[daemon] register result: {:?}", result);
     result.inner.to_result()?;
     if let Err(err) = clock.update_with_timestamp(&result.timestamp) {
         tracing::warn!("failed to update timestamp after register: {err}");

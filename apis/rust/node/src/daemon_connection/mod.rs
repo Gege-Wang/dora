@@ -31,6 +31,7 @@ impl DaemonChannel {
             .os_id(daemon_control_region_id)
             .open()
             .wrap_err("failed to connect to dora-daemon")?;
+        println!("==============================daemon_events_region:new shmem");
         let channel = DaemonChannel::Shmem(
             unsafe { ShmemClient::new(daemon_events_region, Some(Duration::from_secs(5))) }
                 .wrap_err("failed to create ShmemChannel")?,

@@ -12,12 +12,15 @@ pub async fn tcp_send(
 }
 
 pub async fn tcp_receive(connection: &mut (impl AsyncRead + Unpin)) -> std::io::Result<Vec<u8>> {
+    println!("**[daemon] tcp_receive ready to receive message");
     let reply_len = {
         let mut raw = [0; 8];
         connection.read_exact(&mut raw).await?;
+        println!("**[daemon] tcp_receive received message len: {:?}", raw);
         u64::from_le_bytes(raw) as usize
     };
     let mut reply = vec![0; reply_len];
     connection.read_exact(&mut reply).await?;
+    println!("**[daemon] tcp_receive received message: {:?}", reply);
     Ok(reply)
 }

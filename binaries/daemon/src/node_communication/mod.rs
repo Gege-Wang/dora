@@ -39,6 +39,7 @@ pub async fn spawn_listener_loop(
 ) -> eyre::Result<DaemonCommunication> {
     match config {
         LocalCommunicationConfig::Tcp => {
+            println!("==============================tcp tcp tcp tcp spawn_listener_loop: {:?}", config);
             let socket = match TcpListener::bind((LOCALHOST, 0)).await {
                 Ok(socket) => socket,
                 Err(err) => {
@@ -61,6 +62,7 @@ pub async fn spawn_listener_loop(
             Ok(DaemonCommunication::Tcp { socket_addr })
         }
         LocalCommunicationConfig::Shmem => {
+            println!("==============================shmem shmem shmem shmem spawn_listener_loop: {:?}", config);
             let daemon_control_region = ShmemConf::new()
                 .size(4096)
                 .create()
@@ -186,6 +188,7 @@ impl Listener {
                 node_id,
                 dora_version: node_api_version,
             } => {
+                println!("==============================node register register register register: node_id {:?}", node_id);
                 let daemon_version = env!("CARGO_PKG_VERSION");
                 let result = if node_api_version == daemon_version {
                     Ok(())

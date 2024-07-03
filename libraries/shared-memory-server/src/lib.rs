@@ -68,6 +68,7 @@ impl<T, U> ShmemClient<T, U> {
         T: Serialize + std::fmt::Debug,
         U: for<'a> Deserialize<'a> + std::fmt::Debug,
     {
+        println!("===================================ShmemClient request()");
         self.channel
             .send(value)
             .wrap_err("failed to send request")?;

@@ -51,7 +51,7 @@ pub async fn start(
             .wrap_err("failed to open connection")
             .unwrap_or_else(Event::DaemonConnectError)
     });
-    println!("next exec init tasks...");
+    println!("[coordinator]next exec init tasks...");
     let mut tasks = FuturesUnordered::new();
     let control_events = control::control_events(bind_control, &tasks)
         .await
@@ -78,7 +78,7 @@ pub async fn start(
                 tracing::error!("task panicked: {err}");
             }
         }
-        println!("all spawned tasks finished, exiting..");
+        println!("[coordinator]all spawned tasks finished, exiting..");
         tracing::debug!("all spawned tasks finished, exiting..");
         Ok(())
     };
@@ -150,17 +150,21 @@ async fn start_inner(
         if event.log() {
             tracing::trace!("Handling event {event:?}");
         }
+        println!("[coordinator]Handling event {event:?}");
         match event {
             Event::NewDaemonConnection(connection) => {
+                println!("[coordinator]handle Event::NewDaemonConnection... {:?}", connection);
                 connection.set_nodelay(true)?;
                 let events_tx = daemon_events_tx.clone();
                 if let Some(events_tx) = events_tx {
+                    println!("[coordinator] handle NewDaemonConnection events_tx: {:?}", events_tx);
                     let task = tokio::spawn(listener::handle_connection(
                         connection,
                         events_tx,
                         clock.clone(),
                     ));
                     tasks.push(task);
+                    println!("[coordinator] handle NewDaemonConnection pushed task to tasks...");
                 } else {
                     tracing::warn!(
                         "ignoring new daemon connection because events_tx was closed already"
@@ -180,6 +184,7 @@ async fn start_inner(
                     println!("handle DaemonEvent::Register...");
                     let coordinator_version: &&str = &env!("CARGO_PKG_VERSION");
                     let version_check = if &daemon_version == coordinator_version {
+                        println!("[coordinator]DaemonEvent:Register version check passed");
                         Ok(())
                     } else {
                         Err(format!(
@@ -191,6 +196,7 @@ async fn start_inner(
                         .peer_addr()
                         .map(|addr| addr.ip())
                         .map_err(|err| format!("failed to get peer addr of connection: {err}"));
+                    println!("[coordinator]peer_ip: {:?}", peer_ip);
                     let register_result = version_check.and(peer_ip);
 
                     let reply: Timestamped<RegisterResult> = Timestamped {
@@ -200,7 +206,10 @@ async fn start_inner(
                         },
                         timestamp: clock.new_timestamp(),
                     };
+                    println!("[coordinator]Daemon Register reply: {:?}", reply);
+                    println!("[coordinator] ready to send reply to daemon...");
                     let send_result = tcp_send(&mut connection, &serde_json::to_vec(&reply)?).await;
+                    println!("[coordinator] have sent Daemon reply. send_result: {:?}", send_result);
                     match (register_result, send_result) {
                         (Ok(ip), Ok(())) => {
                             let previous = daemon_connections.insert(

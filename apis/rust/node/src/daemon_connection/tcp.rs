@@ -13,6 +13,7 @@ pub fn request(
     connection: &mut TcpStream,
     request: &Timestamped<DaemonRequest>,
 ) -> eyre::Result<DaemonReply> {
+    println!("request: {:?}", request);
     send_message(connection, request)?;
     if request.inner.expects_tcp_bincode_reply() {
         receive_reply(connection, Serializer::Bincode)

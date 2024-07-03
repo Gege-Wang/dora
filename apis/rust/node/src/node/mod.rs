@@ -115,6 +115,7 @@ impl DoraNode {
 
     #[tracing::instrument]
     pub fn init(node_config: NodeConfig) -> eyre::Result<(Self, EventStream)> {
+        println!("=====================init(): {:?}", node_config);
         let NodeConfig {
             dataflow_id,
             node_id,
@@ -202,7 +203,7 @@ impl DoraNode {
 
         let mut sample = self.allocate_data_sample(total_len)?;
         let type_info = copy_array_into_sample(&mut sample, &arrow_array);
-
+        println!("======================================send_output(): {:?}", output_id);
         self.send_output_sample(output_id, type_info, parameters, Some(sample))
             .wrap_err("failed to send output")?;
 
@@ -256,6 +257,8 @@ impl DoraNode {
             parameters.into_owned(),
         );
 
+        println!("=====================datasample: {:?}", sample);
+
         let (data, shmem) = match sample {
             Some(sample) => sample.finalize(),
             None => (None, None),
@@ -266,6 +269,7 @@ impl DoraNode {
             .wrap_err_with(|| format!("failed to send output {output_id}"))?;
 
         if let Some((shared_memory, drop_token)) = shmem {
+            eyre::bail!("=========================shared memory not supported yet");
             self.sent_out_shared_memory
                 .insert(drop_token, shared_memory);
         }

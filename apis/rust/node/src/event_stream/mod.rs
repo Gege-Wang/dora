@@ -45,7 +45,10 @@ impl EventStream {
             DaemonCommunication::Shmem {
                 daemon_events_region_id,
                 ..
-            } => unsafe { DaemonChannel::new_shmem(daemon_events_region_id) }.wrap_err_with(
+            } => unsafe {
+                println!("==============================daemon_events_region_id: {:?}", daemon_events_region_id);
+
+                DaemonChannel::new_shmem(daemon_events_region_id) }.wrap_err_with(
                 || format!("failed to create shmem event stream for node `{node_id}`"),
             )?,
             DaemonCommunication::Tcp { socket_addr } => DaemonChannel::new_tcp(*socket_addr)

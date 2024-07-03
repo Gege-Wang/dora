@@ -61,6 +61,8 @@ pub async fn spawn_node(
         clock.clone(),
     )
     .await?;
+
+    println!("=====================node_id: {:?}, daemon_communication: {:?}", node_id, daemon_communication);
     let send_stdout_to = node
         .send_stdout_as()
         .context("Could not resolve `send_stdout_as` configuration")?;
@@ -73,7 +75,7 @@ pub async fn spawn_node(
         dataflow_descriptor,
         dynamic: node.kind.dynamic(),
     };
-
+    println!("=====================[spawn_node] node_id: {:?}, node_config: {:?}", node_id, node_config);
     let mut child = match node.kind {
         dora_core::descriptor::CoreNodeKind::Custom(n) => {
             let mut command = match n.source.as_str() {
