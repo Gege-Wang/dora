@@ -19,7 +19,7 @@ pub fn check_environment(coordinator_addr: SocketAddr) -> eyre::Result<()> {
     // let mut stdout = termcolor::StandardStream::stdout(color_choice);
 
     // check whether coordinator is running
-    println!("check whether coordinator is running");
+    tracing::debug!("check whether coordinator is running");
     //write!(stdout, "Dora Coordinator: ")?;
     print!("Dora Coordinator: ");
     let mut session = match connect_to_coordinator(coordinator_addr) {
@@ -65,7 +65,7 @@ pub fn check_environment(coordinator_addr: SocketAddr) -> eyre::Result<()> {
     //writeln!(stdout)?;
 
     if error_occurred {
-        println!("Environment check failed.");
+        tracing::debug!("Environment check failed.");
         bail!("Environment check failed.");
     }
 

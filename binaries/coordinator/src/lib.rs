@@ -51,9 +51,9 @@ pub async fn start(
             .wrap_err("failed to open connection")
             .unwrap_or_else(Event::DaemonConnectError)
     });
-    println!("[coordinator]next exec init tasks...");
+    tracing::debug!("[coordinator]next exec init tasks...");
     let mut tasks = FuturesUnordered::new();
-    println!("[coordinator] create futures unordered tasks...");
+    tracing::debug!("[coordinator] create futures unordered tasks...");
     let control_events = control::control_events(bind_control, &tasks)
         .await
         .wrap_err("failed to create control events")?;
@@ -73,13 +73,13 @@ pub async fn start(
         start_inner(events, &tasks).await?;
 
         tracing::debug!("coordinator main loop finished, waiting on spawned tasks");
-        println!("coordinator main loop finished, waiting on spawned tasks");
+        tracing::debug!("coordinator main loop finished, waiting on spawned tasks");
         while let Some(join_result) = tasks.next().await {
             if let Err(err) = join_result {
                 tracing::error!("task panicked: {err}");
             }
         }
-        println!("[coordinator]all spawned tasks finished, exiting..");
+        tracing::debug!("[coordinator]all spawned tasks finished, exiting..");
         tracing::debug!("all spawned tasks finished, exiting..");
         Ok(())
     };
@@ -151,21 +151,21 @@ async fn start_inner(
         if event.log() {
             tracing::trace!("Handling event {event:?}");
         }
-        println!("[coordinator]Handling event {event:?}");
+        tracing::info!("[coordinator]Handling event {event:?}");
         match event {
             Event::NewDaemonConnection(connection) => {
-                println!("[coordinator]handle Event::NewDaemonConnection... {:?}", connection);
+                tracing::info!("[coordinator]handle Event::NewDaemonConnection... {:?}", connection);
                 connection.set_nodelay(true)?;
                 let events_tx = daemon_events_tx.clone();
                 if let Some(events_tx) = events_tx {
-                    println!("[coordinator] handle NewDaemonConnection events_tx: {:?}", events_tx);
+                    tracing::info!("[coordinator] handle NewDaemonConnection events_tx: {:?}", events_tx);
                     let task = tokio::spawn(listener::handle_connection(
                         connection,
                         events_tx,
                         clock.clone(),
                     ));
                     tasks.push(task);
-                    println!("[coordinator] handle NewDaemonConnection pushed task to tasks...");
+                    tracing::info!("[coordinator] handle NewDaemonConnection pushed task to tasks...");
                 } else {
                     tracing::warn!(
                         "ignoring new daemon connection because events_tx was closed already"
@@ -182,10 +182,10 @@ async fn start_inner(
                     dora_version: daemon_version,
                     listen_port,
                 } => {
-                    println!("handle DaemonEvent::Register...");
+                    tracing::info!("handle DaemonEvent::Register...");
                     let coordinator_version: &&str = &env!("CARGO_PKG_VERSION");
                     let version_check = if &daemon_version == coordinator_version {
-                        println!("[coordinator]DaemonEvent:Register version check passed");
+                        tracing::info!("[coordinator]DaemonEvent:Register version check passed");
                         Ok(())
                     } else {
                         Err(format!(
@@ -207,10 +207,10 @@ async fn start_inner(
                         },
                         timestamp: clock.new_timestamp(),
                     };
-                    println!("[coordinator]Daemon Register reply: {:?}", reply);
-                    println!("[coordinator] ready to send reply to daemon...");
+                    tracing::info!("[coordinator]Daemon Register reply: {:?}", reply);
+                    tracing::info!("[coordinator] ready to send reply to daemon...");
                     let send_result = tcp_send(&mut connection, &serde_json::to_vec(&reply)?).await;
-                    println!("[coordinator] have sent Daemon reply. send_result: {:?}", send_result);
+                    tracing::info!("[coordinator] have sent Daemon reply. send_result: {:?}", send_result);
                     match (register_result, send_result) {
                         (Ok(ip), Ok(())) => {
                             let previous = daemon_connections.insert(

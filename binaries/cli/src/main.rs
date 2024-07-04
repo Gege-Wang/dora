@@ -291,7 +291,7 @@ fn run() -> eyre::Result<()> {
         .build()
         .filter();
 
-    println!("[check]Checking environment...");
+    tracing::debug!("[check]Checking environment...");
     match args.command {
         Command::Check {
             dataflow,
@@ -325,7 +325,7 @@ fn run() -> eyre::Result<()> {
             internal_create_with_path_dependencies,
         } => template::create(args, internal_create_with_path_dependencies)?,
         Command::Up { config } => {
-            println!("[up]Starting dora-coordinator and dora-daemon");
+            tracing::debug!("[up]Starting dora-coordinator and dora-daemon");
             up::up(config.as_deref())?;
         }
         Command::Logs {
@@ -448,24 +448,24 @@ fn run() -> eyre::Result<()> {
             control_port,
             quiet,
         } => {
-            println!("[coordinator]Starting dora-coordinator on {interface}:{port}");
+            tracing::debug!("[coordinator]Starting dora-coordinator on {interface}:{port}");
             let rt = Builder::new_multi_thread()
                 .enable_all()
                 .build()
                 .context("tokio runtime failed")?;
-            println!("[coordinator]success build coordinator tokio runtime");
+            tracing::debug!("[coordinator]success build coordinator tokio runtime");
             rt.block_on(async {
                 let bind = SocketAddr::new(interface, port);
                 let bind_control = SocketAddr::new(control_interface, control_port);
-                println!("[coordinator]next exec dora-coordinator::start...");
+                tracing::debug!("[coordinator]next exec dora-coordinator::start...");
                 let (port, task) =
                     dora_coordinator::start(bind, bind_control, futures::stream::empty::<Event>())
                         .await?;
-                println!("[coordinator]finished spawn coordinator on {port}");
+                    tracing::debug!("[coordinator]finished spawn coordinator on {port}");
                 if !quiet {
-                    println!("[coordinator]Listening for incoming daemon connection on {port}");
+                    tracing::debug!("[coordinator]Listening for incoming daemon connection on {port}");
                 }
-                println!("[coordinator]wait coordinator task...");
+                tracing::debug!("[coordinator]wait coordinator task...");
                 task.await
             })
             .context("failed to run dora-coordinator")?
@@ -482,12 +482,12 @@ fn run() -> eyre::Result<()> {
                 .enable_all()
                 .build()
                 .context("tokio runtime failed")?;
-            println!("[daemon]success build daemon tokio runtime");
+            tracing::debug!("[daemon]success build daemon tokio runtime");
             rt.block_on(async {
                 match run_dataflow {
                     Some(dataflow_path) => {
                         tracing::info!("Starting dataflow `{}`", dataflow_path.display());
-                        println!("[daemon]Starting dataflow `{}`", dataflow_path.display());
+                        tracing::debug!("[daemon]Starting dataflow `{}`", dataflow_path.display());
                         if coordinator_addr != SocketAddr::new(LOCALHOST, DORA_COORDINATOR_PORT_DEFAULT){
                             tracing::info!(
                                 "Not using coordinator addr {} as `run_dataflow` is for local dataflow only. Please use the `start` command for remote coordinator",
@@ -501,9 +501,9 @@ fn run() -> eyre::Result<()> {
                     None => {
                         if coordinator_addr.ip() == LOCALHOST {
                             tracing::info!("Starting in local mode");
-                            println!("[daemon]Starting dora-daemon in local mode");
+                            tracing::debug!("[daemon]Starting dora-daemon in local mode");
                         }
-                        println!("[daemon]next exec Daemon::run...");
+                        tracing::debug!("[daemon]next exec Daemon::run...");
                         Daemon::run(coordinator_addr, machine_id.unwrap_or_default(), inter_daemon_addr, local_listen_port).await
                     }
                 }
