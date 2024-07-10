@@ -8793,6 +8793,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sink"
+version = "0.3.4"
+dependencies = [
+ "dora-node-api",
+ "eyre",
+]
+
+[[package]]
 name = "skeptic"
 version = "0.13.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"

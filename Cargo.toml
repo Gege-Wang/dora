@@ -34,7 +34,7 @@ members = [
     "tool_nodes/dora-rerun",
     "libraries/extensions/ros2-bridge",
     "libraries/extensions/ros2-bridge/msg-gen",
-    "libraries/extensions/ros2-bridge/python",
+    "libraries/extensions/ros2-bridge/python", "examples/mix-dataflow/sink",
 ]
 
 [workspace.package]

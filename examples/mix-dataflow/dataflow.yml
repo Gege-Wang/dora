@@ -1,0 +1,14 @@
+nodes:
+  - id: python-node
+    custom:
+      source: python-node.py
+      inputs:
+        tick:
+          source: dora/timer/millis/10
+      outputs:
+        - random
+  - id: rust-sink
+    custom:
+      source: ../../target/debug/rust-dataflow-example-sink
+      inputs:
+        message: python-node/random
