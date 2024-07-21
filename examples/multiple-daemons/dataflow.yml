@@ -2,10 +2,9 @@ nodes:
   - id: rust-node
     _unstable_deploy:
       machine: A
-      local: true
     custom:
       build: cargo build -p multiple-daemons-example-node
-      source: ../../target/debug/multiple-daemons-example-node
+      source: /home/runner/work/dora/dora/target/debug/multiple-daemons-example-node
       inputs:
         tick: dora/timer/millis/10
       outputs:
@@ -13,13 +12,10 @@ nodes:
   - id: runtime-node
     _unstable_deploy:
       machine: B
-      local: false
-      # This path is for CI, replace it with your remote daemon working_dir here
-      working_dir: /home/runner/work/dora/dora/examples/multiple-daemons
     operators:
       - id: rust-operator
         build: cargo build -p multiple-daemons-example-operator
-        shared-library: ../../target/debug/multiple_daemons_example_operator
+        shared-library: /home/runner/work/dora/dora/target/debug/multiple_daemons_example_operator
         inputs:
           tick: dora/timer/millis/100
           random: rust-node/random
@@ -28,9 +24,8 @@ nodes:
   - id: rust-sink
     _unstable_deploy:
       machine: A
-      local: true
     custom:
       build: cargo build -p multiple-daemons-example-sink
-      source: ../../target/debug/multiple-daemons-example-sink
+      source: /home/runner/work/dora/dora/target/debug/multiple-daemons-example-sink
       inputs:
         message: runtime-node/rust-operator/status

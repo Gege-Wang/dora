@@ -607,7 +607,10 @@ impl Daemon {
     ) -> eyre::Result<()> {
         let dataflow = RunningDataflow::new(dataflow_id, self.machine_id.clone());
         let dataflow = match self.running.entry(dataflow_id) {
-            std::collections::hash_map::Entry::Vacant(entry) => entry.insert(dataflow),
+            std::collections::hash_map::Entry::Vacant(entry) => {
+                self.working_dir.insert(dataflow_id, working_dir.clone());
+                entry.insert(dataflow)
+            }
             std::collections::hash_map::Entry::Occupied(_) => {
                 bail!("there is already a running dataflow with ID `{dataflow_id}`")
             }

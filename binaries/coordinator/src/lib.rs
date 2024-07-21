@@ -665,7 +665,6 @@ fn dataflow_result(
     }
 }
 
-#[derive(Debug)]
 struct DaemonConnection {
     stream: TcpStream,
     listen_socket: SocketAddr,
