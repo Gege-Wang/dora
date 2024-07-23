@@ -370,9 +370,9 @@ fn run() -> eyre::Result<()> {
             if !coordinator_addr.is_loopback() {
                 dataflow_descriptor.check_in_daemon(&working_dir, &[], true)?;
             } else {
-                dataflow_descriptor
-                    .check(&working_dir)
-                    .wrap_err("Could not validate yaml")?;
+                // dataflow_descriptor
+                //     .check(&working_dir)
+                //     .wrap_err("Could not validate yaml")?;
             }
 
             let coordinator_socket = (coordinator_addr, coordinator_port).into();

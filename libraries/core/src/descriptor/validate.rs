@@ -47,10 +47,6 @@ pub fn check_dataflow(
                                 );
                             }
                             info!("skipping path check for remote node `{}`", node.id);
-                        } else {
-                            resolve_path(source, working_dir).wrap_err_with(|| {
-                                format!("Could not find source path `{}`", source)
-                            })?;
                         }
                     } else {
                         resolve_path(source, working_dir)

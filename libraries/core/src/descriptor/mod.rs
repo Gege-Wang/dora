@@ -487,17 +487,18 @@ pub fn resolve_path(source: &str, working_dir: &Path) -> Result<PathBuf> {
         path.to_owned()
     };
 
-    // Search path with remote dataflow
-    if let Ok(abs_path) = path.canonicalize() {
-        return Ok(abs_path);
-    // Search path within current working directory
-    } else if let Ok(abs_path) = working_dir.join(&path).canonicalize() {
+    // // Search path with remote dataflow
+    // if let Ok(abs_path) = path.canonicalize() {
+    //     Ok(abs_path)
+    // // Search path within current working directory
+    // } else 
+    if let Ok(abs_path) = working_dir.join(&path).canonicalize() {
         Ok(abs_path)
     // Search path within $PATH
     } else if let Ok(abs_path) = which::which(&path) {
         Ok(abs_path)
     } else {
-        bail!("Could not find source path {}", path.display())
+        bail!("Could not find source path (resolved path){}", path.display())
     }
 }
 

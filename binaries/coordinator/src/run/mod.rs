@@ -34,6 +34,7 @@ pub(super) async fn spawn_dataflow(
             }
         })
         .collect();
+    println!("remote_machine_id: {:?}", remote_machine_id);
     dataflow.check_in_daemon(&working_dir, &remote_machine_id, false)?;
 
     let nodes = dataflow.resolve_aliases_and_set_defaults()?;
